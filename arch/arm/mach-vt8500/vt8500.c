@@ -45,7 +45,7 @@ void vt8500_restart(enum reboot_mode mode, const char *cmd)
 static struct map_desc vt8500_io_desc[] __initdata = {
 	/* SoC MMIO registers */
 	[0] = {
-		.virtual	= VT8500_REGS_VIRT_BASE,
+		.virtual	= (unsigned long) VT8500_REGS_VIRT_BASE,
 		.pfn		= __phys_to_pfn(VT8500_REGS_PHYS_BASE),
 		.length		= VT8500_REGS_SIZE, /* max of all chip variants */
 		.type		= MT_DEVICE
