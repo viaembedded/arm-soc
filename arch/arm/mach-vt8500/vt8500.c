@@ -32,15 +32,7 @@
 #include <linux/of_irq.h>
 #include <linux/of_platform.h>
 
-#define LEGACY_GPIO_BASE	0xD8110000
-#define LEGACY_PMC_BASE		0xD8130000
-
-/* Registers in GPIO Controller */
-#define VT8500_GPIO_MUX_REG	0x200
-
-/* Registers in Power Management Controller */
-#define VT8500_HCR_REG		0x12
-#define VT8500_PMSR_REG		0x60
+#include "vt8500.h"
 
 static void __iomem *pmc_base;
 
@@ -53,9 +45,9 @@ void vt8500_restart(enum reboot_mode mode, const char *cmd)
 static struct map_desc vt8500_io_desc[] __initdata = {
 	/* SoC MMIO registers */
 	[0] = {
-		.virtual	= 0xf8000000,
-		.pfn		= __phys_to_pfn(0xd8000000),
-		.length		= 0x00390000, /* max of all chip variants */
+		.virtual	= VT8500_REGS_VIRT_BASE,
+		.pfn		= __phys_to_pfn(VT8500_REGS_PHYS_BASE),
+		.length		= VT8500_REGS_SIZE, /* max of all chip variants */
 		.type		= MT_DEVICE
 	},
 };
@@ -93,7 +85,7 @@ void __init vt8500_init(void)
 
 			of_node_put(np);
 		} else {
-			gpio_base = ioremap(LEGACY_GPIO_BASE, 0x1000);
+			gpio_base = ioremap(VT8500_LEGACY_GPIO_BASE, 0x1000);
 			if (!gpio_base)
 				pr_err("%s: ioremap(legacy_gpio_mux) failed\n",
 								__func__);
@@ -125,7 +117,7 @@ void __init vt8500_init(void)
 
 			of_node_put(np);
 		} else {
-			gpio_base = ioremap(LEGACY_GPIO_BASE, 0x1000);
+			gpio_base = ioremap(VT8500_LEGACY_GPIO_BASE, 0x1000);
 			if (!gpio_base)
 				pr_err("%s: ioremap(legacy_gpio_mux) failed\n",
 								__func__);
@@ -150,7 +142,7 @@ void __init vt8500_init(void)
 
 		of_node_put(np);
 	} else {
-		pmc_base = ioremap(LEGACY_PMC_BASE, 0x1000);
+		pmc_base = ioremap(VT8500_LEGACY_PMC_BASE, 0x1000);
 		if (!pmc_base)
 			pr_err("%s:ioremap(power_off) failed\n", __func__);
 	}
